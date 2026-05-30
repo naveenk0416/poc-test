@@ -86,6 +86,64 @@ exports.login = async (req, res) => {
   }
 };
 
+// @desc    Admin create new user
+// @route   POST /api/auth/users
+// @access  Private (Admin only)
+exports.adminCreateUser = async (req, res) => {
+  try {
+    const adminUser = await User.findById(req.user.id);
+    if (!adminUser || adminUser.userGroup !== 'Admin') {
+      return res.status(403).json({ message: 'Not authorized as an admin' });
+    }
+
+    const { name, email, password, gender, userGroup } = req.body;
+
+    // Check if user exists
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // Validate role
+    if (!['Citizen', 'Constable', 'SI', 'Inspector', 'ACP', 'Admin'].includes(userGroup)) {
+      return res.status(400).json({ message: 'Invalid user group' });
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create user
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      gender,
+      userGroup
+    });
+
+    if (user) {
+      res.status(201).json({
+        _id: user.id,
+        name: user.name,
+        email: user.email,
+        gender: user.gender,
+        userGroup: user.userGroup
+      });
+    } else {
+      res.status(400).json({ message: 'Invalid user data' });
+    }
+  } catch (error) {
+    console.error(error);
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(val => val.message);
+      return res.status(400).json({ message: messages.join(', ') });
+    }
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 // @desc    Get all users
 // @route   GET /api/auth/users
 // @access  Private (Admin only)

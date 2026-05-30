@@ -46,6 +46,17 @@ export class DashboardComponent implements OnInit {
 
   userGroups = ['Citizen', 'Constable', 'SI', 'Inspector', 'ACP', 'Admin'];
 
+  newUser = {
+    name: '',
+    email: '',
+    password: '',
+    gender: 'Male',
+    userGroup: 'Citizen'
+  };
+  isCreatingUser = false;
+  createUserError = '';
+  createUserSuccess = '';
+
   constructor(
     private authService: AuthService,
     private firService: FirService
@@ -113,6 +124,30 @@ export class DashboardComponent implements OnInit {
       },
       error: (err) => {
         alert('Failed to update user group');
+      }
+    });
+  }
+
+  adminCreateUser(): void {
+    if (!this.newUser.name || !this.newUser.email || !this.newUser.password) {
+      this.createUserError = 'Please fill out all required fields.';
+      return;
+    }
+
+    this.isCreatingUser = true;
+    this.createUserError = '';
+    this.createUserSuccess = '';
+
+    this.authService.adminCreateUser(this.newUser).subscribe({
+      next: (res) => {
+        this.isCreatingUser = false;
+        this.createUserSuccess = `User ${res.name} created successfully.`;
+        this.newUser = { name: '', email: '', password: '', gender: 'Male', userGroup: 'Citizen' };
+        this.loadAllUsers(); // Refresh the list
+      },
+      error: (err) => {
+        this.isCreatingUser = false;
+        this.createUserError = err.error?.message || 'Failed to create user';
       }
     });
   }

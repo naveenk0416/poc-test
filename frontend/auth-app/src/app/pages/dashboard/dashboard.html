@@ -138,6 +138,36 @@
       </mat-card-header>
       
       <mat-card-content>
+        <!-- User Creation Form -->
+        <div class="create-user-section">
+          <h3>Register New User</h3>
+          <div *ngIf="createUserSuccess" class="success-message">{{ createUserSuccess }}</div>
+          <div *ngIf="createUserError" class="error-message">{{ createUserError }}</div>
+
+          <div class="create-user-form">
+            <input type="text" placeholder="Name" [(ngModel)]="newUser.name" class="custom-input">
+            <input type="email" placeholder="Email" [(ngModel)]="newUser.email" class="custom-input">
+            <input type="password" placeholder="Password" [(ngModel)]="newUser.password" class="custom-input">
+
+            <select [(ngModel)]="newUser.gender" class="custom-select">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+
+            <select [(ngModel)]="newUser.userGroup" class="custom-select">
+              <option *ngFor="let group of userGroups" [value]="group">{{ group }}</option>
+            </select>
+
+            <button mat-raised-button color="primary" (click)="adminCreateUser()" [disabled]="isCreatingUser">
+              <mat-spinner diameter="20" *ngIf="isCreatingUser" class="spinner"></mat-spinner>
+              <span *ngIf="!isCreatingUser">Create User</span>
+            </button>
+          </div>
+        </div>
+
+        <hr class="divider">
+
         <div *ngIf="usersLoading" class="loading-users">
           <mat-spinner diameter="30"></mat-spinner>
         </div>
