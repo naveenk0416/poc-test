@@ -67,14 +67,14 @@ const FirSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Pre-save hook to generate FIR number automatically
-FirSchema.pre('save', async function(next) {
+// Use an async hook without `next()` (Mongoose handles async hooks by returning a promise)
+FirSchema.pre('save', async function() {
   if (!this.firNumber) {
     const date = new Date();
     const year = date.getFullYear();
     const count = await this.constructor.countDocuments();
     this.firNumber = `FIR-${year}-${(count + 1).toString().padStart(5, '0')}`;
   }
-  next();
 });
 
 module.exports = mongoose.model('Fir', FirSchema);

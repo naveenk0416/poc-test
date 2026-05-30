@@ -5,6 +5,10 @@ const Fir = require('../models/Fir');
 // @access  Private
 exports.createFir = async (req, res) => {
   try {
+    // Ensure the user is authenticated
+    if (!req.user) {
+      return res.status(401).json({ message: 'Not authorized' });
+    }
     const {
       policeStation,
       district,
@@ -27,7 +31,17 @@ exports.createFir = async (req, res) => {
     res.status(201).json(fir);
   } catch (error) {
     console.error('Error creating FIR:', error);
-    res.status(500).json({ message: 'Server error creating FIR' });
+    // Send validation errors back to client for easier debugging
+    if (error.name === 'ValidationError') {
+      const details = Object.keys(error.errors).reduce((acc, key) => {
+        acc[key] = error.errors[key].message || error.errors[key].kind || error.errors[key].path;
+        return acc;
+      }, {});
+      return res.status(400).json({ message: 'Validation error creating FIR', errors: details });
+    }
+
+    // Generic server error
+    res.status(500).json({ message: 'Server error creating FIR', error: error.message });
   }
 };
 
