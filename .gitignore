@@ -1,0 +1,10 @@
+node_modules/
+backend/node_modules/
+frontend/auth-app/node_modules/
+frontend/auth-app/dist/
+frontend/auth-app/.angular/
+package-lock.json
+package.json
+e2e-test.js
+server.log
+frontend.log
