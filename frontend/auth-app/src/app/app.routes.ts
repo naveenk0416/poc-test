@@ -11,5 +11,6 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'register-fir', component: FirRegistrationComponent, canActivate: [AuthGuard] },
+  { path: 'edit-fir/:id', component: FirRegistrationComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: 'login' }
 ];

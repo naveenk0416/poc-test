@@ -152,6 +152,12 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  canEditFir(): boolean {
+    if (!this.user) return false;
+    const allowed = ['Admin', 'SI', 'Constable', 'Inspector', 'ACP'];
+    return allowed.includes(this.user.userGroup);
+  }
+
   logout(): void {
     this.authService.logout();
   }

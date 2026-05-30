@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createFir, getFirs, getFirById } = require('../controllers/firController');
+const { createFir, getFirs, getFirById, updateFir } = require('../controllers/firController');
 const { protect } = require('../middleware/auth');
 
 router.route('/')
@@ -8,6 +8,7 @@ router.route('/')
   .get(protect, getFirs);
 
 router.route('/:id')
-  .get(protect, getFirById);
+  .get(protect, getFirById)
+  .put(protect, updateFir);
 
 module.exports = router;
