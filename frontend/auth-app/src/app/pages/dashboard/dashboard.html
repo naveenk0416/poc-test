@@ -17,26 +17,158 @@
       {{ error }}
     </div>
 
-    <mat-card *ngIf="user && !isLoading" class="user-card">
+    <div class="dashboard-grid" *ngIf="user && !isLoading">
+      <!-- Profile Card -->
+      <mat-card class="user-card">
+        <mat-card-header>
+          <div mat-card-avatar class="user-avatar">
+            <mat-icon>person</mat-icon>
+          </div>
+          <mat-card-title>Welcome, {{ user.name }}!</mat-card-title>
+          <mat-card-subtitle>Role: {{ user.userGroup }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="user-details">
+            <div class="detail-item">
+              <mat-icon>email</mat-icon>
+              <span>{{ user.email }}</span>
+            </div>
+            <div class="detail-item">
+              <mat-icon>calendar_today</mat-icon>
+              <span>Member Since: {{ user.createdAt | date:'mediumDate' }}</span>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <a mat-raised-button color="primary" routerLink="/register-fir" class="full-width">
+              <mat-icon>add_circle</mat-icon>
+              Register New FIR
+            </a>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Stats Cards -->
+      <div class="stats-container">
+        <mat-card class="stat-card total-firs">
+          <mat-card-content>
+            <div class="stat-icon"><mat-icon>folder</mat-icon></div>
+            <div class="stat-data">
+              <h3>Total FIRs</h3>
+              <p class="stat-number">{{ totalFirs }}</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card open-cases">
+          <mat-card-content>
+            <div class="stat-icon"><mat-icon>folder_open</mat-icon></div>
+            <div class="stat-data">
+              <h3>Open Cases</h3>
+              <p class="stat-number">{{ openCases }}</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card closed-cases">
+          <mat-card-content>
+            <div class="stat-icon"><mat-icon>done_all</mat-icon></div>
+            <div class="stat-data">
+              <h3>Closed Cases</h3>
+              <p class="stat-number">{{ closedCases }}</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- FIR Tracking Table -->
+    <mat-card *ngIf="user && !isLoading" class="table-card">
       <mat-card-header>
-        <div mat-card-avatar class="user-avatar">
-          <mat-icon>person</mat-icon>
+        <mat-card-title>FIR Records</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div *ngIf="firsLoading" class="loading-users">
+          <mat-spinner diameter="30"></mat-spinner>
         </div>
-        <mat-card-title>Welcome, {{ user.name }}!</mat-card-title>
-        <mat-card-subtitle>User Profile</mat-card-subtitle>
+
+        <div *ngIf="firsError" class="error-message">
+          {{ firsError }}
+        </div>
+
+        <div class="table-container" *ngIf="!firsLoading && allFirs.length > 0">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>FIR Number</th>
+                <th>Date</th>
+                <th>Incident Type</th>
+                <th>Police Station</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let fir of allFirs">
+                <td><strong>{{ fir.firNumber }}</strong></td>
+                <td>{{ fir.firDate | date:'mediumDate' }}</td>
+                <td>{{ fir.incident?.incidentType }}</td>
+                <td>{{ fir.policeStation }}</td>
+                <td>
+                  <span class="status-badge" [ngClass]="fir.status.replace(' ', '-').toLowerCase()">
+                    {{ fir.status }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="!firsLoading && allFirs.length === 0" class="no-data">
+          <p>No FIR records found.</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Admin Panel -->
+    <mat-card *ngIf="user && user.userGroup === 'Admin'" class="admin-card">
+      <mat-card-header>
+        <mat-card-title>Admin Panel - User Management</mat-card-title>
       </mat-card-header>
       
       <mat-card-content>
-        <div class="user-details">
-          <div class="detail-item">
-            <strong>Email:</strong> {{ user.email }}
-          </div>
-          <div class="detail-item">
-            <strong>Gender:</strong> {{ user.gender }}
-          </div>
-          <div class="detail-item">
-            <strong>Member Since:</strong> {{ user.createdAt | date:'mediumDate' }}
-          </div>
+        <div *ngIf="usersLoading" class="loading-users">
+          <mat-spinner diameter="30"></mat-spinner>
+        </div>
+
+        <div *ngIf="usersError" class="error-message">
+          {{ usersError }}
+        </div>
+
+        <div class="table-container" *ngIf="!usersLoading && allUsers.length > 0">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Gender</th>
+                <th>Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of allUsers">
+                <td>{{ u.name }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.gender }}</td>
+                <td>
+                  <select [ngModel]="u.userGroup" (ngModelChange)="onUserGroupChange(u, $event)" class="group-select">
+                    <option *ngFor="let group of userGroups" [value]="group">{{ group }}</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </mat-card-content>
     </mat-card>

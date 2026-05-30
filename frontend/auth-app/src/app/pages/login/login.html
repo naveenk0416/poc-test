@@ -1,35 +1,54 @@
 <div class="auth-container">
-  <mat-card class="auth-card">
-    <mat-card-header>
-      <mat-card-title>Login</mat-card-title>
-    </mat-card-header>
-    
-    <mat-card-content>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" type="email" placeholder="Ex. pat@example.com">
-          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
-            Email is <strong>required</strong>
-          </mat-error>
-          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
-            Please enter a valid email address
-          </mat-error>
-        </mat-form-field>
+  <div class="login-left-panel">
+    <div class="login-form-container">
+      <div class="logo">
+        <mat-icon color="primary" style="transform: rotate(45deg); font-size: 32px; width: 32px; height: 32px;">flash_on</mat-icon>
+      </div>
+      <h1 class="login-title">Login</h1>
+      <p class="login-subtitle">See your growth and get consulting support!</p>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Password</mat-label>
-          <input matInput formControlName="password" type="password">
-          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
-            Password is <strong>required</strong>
-          </mat-error>
-          <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+      <button mat-stroked-button class="google-btn full-width">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google Logo" class="google-logo">
+        Sign in with Google
+      </button>
+
+      <div class="divider">
+        <span>or Sign in with Email</span>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="custom-form">
+        <div class="form-group">
+          <label for="email">Email*</label>
+          <input id="email" formControlName="email" type="email" placeholder="mail@website.com" class="custom-input">
+          <div class="error-text" *ngIf="loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched">
+            Email is required
+          </div>
+          <div class="error-text" *ngIf="loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched">
+            Please enter a valid email address
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password*</label>
+          <input id="password" formControlName="password" type="password" placeholder="Min. 8 character" class="custom-input">
+          <div class="error-text" *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched">
+            Password is required
+          </div>
+          <div class="error-text" *ngIf="loginForm.get('password')?.hasError('minlength') && loginForm.get('password')?.touched">
             Password must be at least 6 characters
-          </mat-error>
-        </mat-form-field>
+          </div>
+        </div>
+
+        <div class="form-actions-row">
+          <div class="checkbox-container">
+            <input type="checkbox" id="remember">
+            <label for="remember">Remember me</label>
+          </div>
+          <a href="#" class="forgot-pwd" (click)="$event.preventDefault()">Forget password?</a>
+        </div>
 
         <div class="actions">
-          <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading" class="full-width">
+          <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading" class="full-width login-btn">
             <mat-spinner diameter="20" *ngIf="isLoading" class="spinner"></mat-spinner>
             <span *ngIf="!isLoading">Login</span>
           </button>
@@ -37,8 +56,66 @@
       </form>
       
       <div class="links">
-        <p>Don't have an account? <a routerLink="/register">Register</a></p>
+        <p>Not registered yet? <a routerLink="/register">Create an Account</a></p>
       </div>
-    </mat-card-content>
-  </mat-card>
+
+      <div class="copyright">
+        &copy;2020 Felix All rights reserved.
+      </div>
+    </div>
+  </div>
+
+  <div class="login-right-panel">
+    <div class="promo-content">
+      <div class="floating-icons">
+        <div class="icon-circle icon-twitter">
+          <i class="fab fa-twitter" style="color: #1da1f2;"></i>
+        </div>
+        <div class="icon-circle icon-instagram">
+          <i class="fab fa-instagram" style="color: #e1306c;"></i>
+        </div>
+        <div class="icon-circle icon-messenger">
+          <i class="fab fa-facebook-messenger" style="color: #0084ff;"></i>
+        </div>
+      </div>
+
+      <div class="cards-container">
+        <!-- Mock representation of the graph and rewards cards -->
+        <div class="mock-card graph-card">
+          <div class="graph-header">
+            <div class="amount">$ 162,751</div>
+            <div class="period">Last year</div>
+          </div>
+          <div class="graph-body">
+            <!-- Simulated graph lines with pure css/svg -->
+            <svg viewBox="0 0 200 80" class="graph-svg">
+              <path d="M0 60 Q 20 20, 50 40 T 100 20 T 150 50 T 200 40" fill="none" stroke="#4a148c" stroke-width="2"/>
+              <path d="M0 70 Q 30 40, 60 60 T 120 50 T 170 70 T 200 60" fill="none" stroke="#b39ddb" stroke-width="2"/>
+            </svg>
+            <div class="graph-tooltip">
+              <div class="tooltip-val">$ 23,827</div>
+              <div class="tooltip-month">August</div>
+            </div>
+          </div>
+          <div class="graph-footer">
+            <span>APR</span><span>MAY</span><span>JUN</span><span class="active">JUL</span><span>AUG</span>
+          </div>
+        </div>
+
+        <div class="mock-card rewards-card">
+          <h3 class="rewards-title">Rewards</h3>
+          <div class="avatar-circle">
+            <mat-icon>person</mat-icon>
+          </div>
+          <div class="points-label">Points</div>
+          <div class="points-value">172,832</div>
+        </div>
+      </div>
+
+      <div class="promo-text">
+        <h2>Turn your ideas<br>into reality.</h2>
+        <p>Consistent quality and experience across<br>all platforms and devices.</p>
+      </div>
+    </div>
+  </div>
 </div>

@@ -32,7 +32,8 @@ exports.register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      gender
+      gender,
+      userGroup: 'Citizen' // default
     });
 
     if (user) {
@@ -41,6 +42,7 @@ exports.register = async (req, res) => {
         name: user.name,
         email: user.email,
         gender: user.gender,
+        userGroup: user.userGroup,
         token: generateToken(user._id),
       });
     } else {
@@ -72,6 +74,7 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         gender: user.gender,
+        userGroup: user.userGroup,
         token: generateToken(user._id),
       });
     } else {
@@ -79,6 +82,51 @@ exports.login = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// @desc    Get all users
+// @route   GET /api/auth/users
+// @access  Private (Admin only)
+exports.getAllUsers = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user || user.userGroup !== 'Admin') {
+      return res.status(403).json({ message: 'Not authorized as an admin' });
+    }
+    const users = await User.find({});
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// @desc    Update user group
+// @route   PUT /api/auth/users/:id/group
+// @access  Private (Admin only)
+exports.updateUserGroup = async (req, res) => {
+  try {
+    const adminUser = await User.findById(req.user.id);
+    if (!adminUser || adminUser.userGroup !== 'Admin') {
+      return res.status(403).json({ message: 'Not authorized as an admin' });
+    }
+
+    const { userGroup } = req.body;
+    if (!['Citizen', 'Constable', 'SI', 'Inspector', 'ACP', 'Admin'].includes(userGroup)) {
+      return res.status(400).json({ message: 'Invalid user group' });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.userGroup = userGroup;
+    await user.save();
+
+    res.status(200).json(user);
+  } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
 };
