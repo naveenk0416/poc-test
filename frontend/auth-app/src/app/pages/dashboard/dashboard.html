@@ -117,9 +117,16 @@
                 <td>{{ fir.incident?.incidentType }}</td>
                 <td>{{ fir.policeStation }}</td>
                 <td>
-                  <span class="status-badge" [ngClass]="fir.status.replace(' ', '-').toLowerCase()">
-                    {{ fir.status }}
-                  </span>
+                  <ng-container *ngIf="!canEditFir()">
+                    <span class="status-badge" [ngClass]="fir.status.replace(' ', '-').toLowerCase()">
+                      {{ fir.status }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="canEditFir()">
+                    <select [ngModel]="fir.status" (ngModelChange)="onFirStatusChange(fir, $event)" class="group-select">
+                      <option *ngFor="let s of firStatuses" [value]="s">{{ s }}</option>
+                    </select>
+                  </ng-container>
                 </td>
                 <td>
                   <button mat-icon-button color="primary" *ngIf="canEditFir()" [routerLink]="['/edit-fir', fir._id]">
