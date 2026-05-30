@@ -26,6 +26,11 @@ const UserSchema = new mongoose.Schema({
     required: [true, 'Please select a gender'],
     enum: ['Male', 'Female', 'Other']
   },
+  userGroup: {
+    type: String,
+    enum: ['Citizen', 'Constable', 'SI', 'Inspector', 'ACP', 'Admin'],
+    default: 'Citizen'
+  },
   createdAt: {
     type: Date,
     default: Date.now

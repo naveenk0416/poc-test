@@ -47,4 +47,12 @@ export class AuthService {
   getMe(): Observable<any> {
     return this.http.get(`${this.apiUrl}/me`);
   }
+
+  getUsers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/users`);
+  }
+
+  updateUserGroup(userId: string, userGroup: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/users/${userId}/group`, { userGroup });
+  }
 }

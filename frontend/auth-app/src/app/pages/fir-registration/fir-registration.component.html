@@ -1,0 +1,143 @@
+<div class="fir-container">
+  <mat-card class="fir-card">
+    <mat-card-header>
+      <div mat-card-avatar class="header-icon">
+        <mat-icon>gavel</mat-icon>
+      </div>
+      <mat-card-title>Register First Information Report (FIR)</mat-card-title>
+      <mat-card-subtitle>Fill out the details carefully.</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="firForm" (ngSubmit)="onSubmit()">
+        <mat-stepper orientation="vertical" [linear]="false">
+          <!-- Step 1: Basic FIR Info -->
+          <mat-step [stepControl]="firForm">
+            <ng-template matStepLabel>FIR Information</ng-template>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Police Station</mat-label>
+                <input matInput formControlName="policeStation" required>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>District</mat-label>
+                <input matInput formControlName="district" required>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>State</mat-label>
+                <input matInput formControlName="state" required>
+              </mat-form-field>
+            </div>
+            <div class="step-actions">
+              <button mat-button type="button" matStepperNext>Next</button>
+            </div>
+          </mat-step>
+
+          <!-- Step 2: Complainant Details -->
+          <mat-step formGroupName="complainant">
+            <ng-template matStepLabel>Complainant Details</ng-template>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Full Name</mat-label>
+                <input matInput formControlName="fullName" required>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Father/Husband Name</mat-label>
+                <input matInput formControlName="fatherOrHusbandName">
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Gender</mat-label>
+                <mat-select formControlName="gender">
+                  <mat-option value="Male">Male</mat-option>
+                  <mat-option value="Female">Female</mat-option>
+                  <mat-option value="Other">Other</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Age</mat-label>
+                <input matInput type="number" formControlName="age">
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Mobile Number</mat-label>
+                <input matInput formControlName="mobileNumber" required>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Email Address</mat-label>
+                <input matInput type="email" formControlName="email">
+              </mat-form-field>
+            </div>
+
+            <div class="step-actions">
+              <button mat-button type="button" matStepperPrevious>Back</button>
+              <button mat-button type="button" matStepperNext>Next</button>
+            </div>
+          </mat-step>
+
+          <!-- Step 3: Incident Details -->
+          <mat-step formGroupName="incident">
+            <ng-template matStepLabel>Incident Details</ng-template>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Incident Type</mat-label>
+                <mat-select formControlName="incidentType" required>
+                  <mat-option *ngFor="let type of incidentTypes" [value]="type">{{type}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Occurrence Date</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="occurrenceDate" required>
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Place of Occurrence</mat-label>
+                <input matInput formControlName="placeOfOccurrence" required>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Incident Description</mat-label>
+                <textarea matInput formControlName="incidentDescription" rows="4" required></textarea>
+              </mat-form-field>
+            </div>
+
+            <div class="step-actions">
+              <button mat-button type="button" matStepperPrevious>Back</button>
+              <button mat-button type="button" matStepperNext>Review</button>
+            </div>
+          </mat-step>
+
+          <!-- Step 4: Finalize -->
+          <mat-step>
+            <ng-template matStepLabel>Review and Submit</ng-template>
+            <p>Please ensure all details entered are correct. Submitting false information is a punishable offense.</p>
+            <div class="step-actions">
+              <button mat-button type="button" matStepperPrevious>Back</button>
+              <button mat-raised-button color="primary" type="submit" [disabled]="firForm.invalid || isSubmitting">
+                Submit FIR
+              </button>
+            </div>
+          </mat-step>
+        </mat-stepper>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
