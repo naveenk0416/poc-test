@@ -4,12 +4,16 @@
       <div mat-card-avatar class="header-icon">
         <mat-icon>gavel</mat-icon>
       </div>
-      <mat-card-title>Register First Information Report (FIR)</mat-card-title>
+      <mat-card-title *ngIf="!isEditMode">Register First Information Report (FIR)</mat-card-title>
+      <mat-card-title *ngIf="isEditMode">Update First Information Report (FIR)</mat-card-title>
       <mat-card-subtitle>Fill out the details carefully.</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
-      <form [formGroup]="firForm" (ngSubmit)="onSubmit()">
+      <div *ngIf="isLoading" style="display:flex; justify-content:center; padding: 20px;">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+      <form *ngIf="!isLoading" [formGroup]="firForm" (ngSubmit)="onSubmit()">
         <mat-stepper orientation="vertical" [linear]="false">
           <!-- Step 1: Basic FIR Info -->
           <mat-step [stepControl]="firForm">
@@ -132,7 +136,8 @@
             <div class="step-actions">
               <button mat-button type="button" matStepperPrevious>Back</button>
               <button mat-raised-button color="primary" type="submit" [disabled]="firForm.invalid || isSubmitting">
-                Submit FIR
+                <span *ngIf="!isEditMode">Submit FIR</span>
+                <span *ngIf="isEditMode">Update FIR</span>
               </button>
             </div>
           </mat-step>

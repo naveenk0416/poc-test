@@ -54,6 +54,37 @@ exports.getFirs = async (req, res) => {
   }
 };
 
+// @desc    Update FIR by ID
+// @route   PUT /api/firs/:id
+// @access  Private (Authorized roles only)
+exports.updateFir = async (req, res) => {
+  try {
+    const userRole = req.user.userGroup;
+    const allowedRoles = ['Admin', 'SI', 'Constable', 'Inspector', 'ACP'];
+
+    if (!allowedRoles.includes(userRole)) {
+      return res.status(403).json({ message: 'Not authorized to edit FIRs' });
+    }
+
+    let fir = await Fir.findById(req.params.id);
+
+    if (!fir) {
+      return res.status(404).json({ message: 'FIR not found' });
+    }
+
+    fir = await Fir.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json(fir);
+  } catch (error) {
+    console.error('Error updating FIR:', error);
+    res.status(500).json({ message: 'Server error updating FIR' });
+  }
+};
+
 // @desc    Get FIR by ID
 // @route   GET /api/firs/:id
 // @access  Private
