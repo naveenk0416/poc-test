@@ -52,6 +52,10 @@ export class AuthService {
     return this.http.get<any[]>(`${this.apiUrl}/users`);
   }
 
+  adminCreateUser(userData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users`, userData);
+  }
+
   updateUserGroup(userId: string, userGroup: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/users/${userId}/group`, { userGroup });
   }
