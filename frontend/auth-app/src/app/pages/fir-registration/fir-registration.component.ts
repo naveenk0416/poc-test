@@ -15,6 +15,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-fir-registration',
@@ -31,7 +32,8 @@ import { MatStepperModule } from '@angular/material/stepper';
     MatDatepickerModule,
     MatNativeDateModule,
     MatIconModule,
-    MatStepperModule
+    MatStepperModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './fir-registration.component.html',
   styleUrls: ['./fir-registration.component.css']
@@ -47,6 +49,12 @@ export class FirRegistrationComponent implements OnInit {
     'Theft', 'Robbery', 'Assault', 'Cyber Crime', 'Kidnapping',
     'Fraud', 'Domestic Violence', 'Missing Person', 'Murder',
     'Property Damage', 'Vehicle Theft', 'Others'
+  ];
+
+  firStatuses = [
+    'Draft', 'Submitted', 'Registered', 'Assigned',
+    'Investigation In Progress', 'Evidence Collected',
+    'Charge Sheet Filed', 'Court Trial', 'Closed', 'Rejected'
   ];
 
   constructor(
@@ -90,7 +98,8 @@ export class FirRegistrationComponent implements OnInit {
         state: [''],
         incidentDescription: ['', Validators.required],
         delayReason: ['']
-      })
+      }),
+      status: ['Submitted']
     });
   }
 

@@ -132,6 +132,15 @@
           <!-- Step 4: Finalize -->
           <mat-step>
             <ng-template matStepLabel>Review and Submit</ng-template>
+            <div *ngIf="isEditMode" class="form-row" style="margin-bottom: 20px;">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>FIR Status</mat-label>
+                <mat-select formControlName="status">
+                  <mat-option *ngFor="let s of firStatuses" [value]="s">{{ s }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
             <p>Please ensure all details entered are correct. Submitting false information is a punishable offense.</p>
             <div class="step-actions">
               <button mat-button type="button" matStepperPrevious>Back</button>

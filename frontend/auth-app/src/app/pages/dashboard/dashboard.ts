@@ -45,6 +45,7 @@ export class DashboardComponent implements OnInit {
   closedCases = 0;
 
   userGroups = ['Citizen', 'Constable', 'SI', 'Inspector', 'ACP', 'Admin'];
+  firStatuses = ['Draft', 'Submitted', 'Registered', 'Assigned', 'Investigation In Progress', 'Evidence Collected', 'Charge Sheet Filed', 'Court Trial', 'Closed', 'Rejected'];
 
   newUser = {
     name: '',
@@ -124,6 +125,21 @@ export class DashboardComponent implements OnInit {
       },
       error: (err) => {
         alert('Failed to update user group');
+      }
+    });
+  }
+
+  onFirStatusChange(fir: any, newStatus: string): void {
+    const oldStatus = fir.status;
+    this.firService.updateFir(fir._id, { status: newStatus }).subscribe({
+      next: (updatedFir) => {
+        fir.status = updatedFir.status;
+        alert(`Successfully updated FIR status to ${updatedFir.status}`);
+        this.calculateStats(); // Recalculate if a case was closed
+      },
+      error: (err) => {
+        fir.status = oldStatus;
+        alert('Failed to update FIR status');
       }
     });
   }
