@@ -107,6 +107,7 @@
                 <th>Incident Type</th>
                 <th>Police Station</th>
                 <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -119,6 +120,11 @@
                   <span class="status-badge" [ngClass]="fir.status.replace(' ', '-').toLowerCase()">
                     {{ fir.status }}
                   </span>
+                </td>
+                <td>
+                  <button mat-icon-button color="primary" *ngIf="canEditFir()" [routerLink]="['/edit-fir', fir._id]">
+                    <mat-icon>edit</mat-icon>
+                  </button>
                 </td>
               </tr>
             </tbody>

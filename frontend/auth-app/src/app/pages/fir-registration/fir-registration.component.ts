@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FirService } from '../../core/fir.service';
 
 // Angular Material
@@ -36,9 +36,12 @@ import { MatStepperModule } from '@angular/material/stepper';
   templateUrl: './fir-registration.component.html',
   styleUrls: ['./fir-registration.component.css']
 })
-export class FirRegistrationComponent {
+export class FirRegistrationComponent implements OnInit {
   firForm: FormGroup;
   isSubmitting = false;
+  isEditMode = false;
+  firId: string | null = null;
+  isLoading = false;
 
   incidentTypes = [
     'Theft', 'Robbery', 'Assault', 'Cyber Crime', 'Kidnapping',
@@ -49,7 +52,8 @@ export class FirRegistrationComponent {
   constructor(
     private fb: FormBuilder,
     private firService: FirService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.firForm = this.fb.group({
       policeStation: ['', Validators.required],
@@ -90,21 +94,61 @@ export class FirRegistrationComponent {
     });
   }
 
+  ngOnInit(): void {
+    this.firId = this.route.snapshot.paramMap.get('id');
+    if (this.firId) {
+      this.isEditMode = true;
+      this.loadFirDetails();
+    }
+  }
+
+  loadFirDetails() {
+    this.isLoading = true;
+    this.firService.getFirById(this.firId!).subscribe({
+      next: (fir) => {
+        this.firForm.patchValue(fir);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching FIR for edit:', err);
+        alert('Could not load FIR details.');
+        this.isLoading = false;
+        this.router.navigate(['/dashboard']);
+      }
+    });
+  }
+
   onSubmit() {
     if (this.firForm.valid) {
       this.isSubmitting = true;
-      this.firService.createFir(this.firForm.value).subscribe({
-        next: (res) => {
-          this.isSubmitting = false;
-          alert('FIR Registered successfully! FIR Number: ' + res.firNumber);
-          this.router.navigate(['/dashboard']);
-        },
-        error: (err) => {
-          this.isSubmitting = false;
-          alert('Error registering FIR.');
-          console.error(err);
-        }
-      });
+
+      if (this.isEditMode) {
+        this.firService.updateFir(this.firId!, this.firForm.value).subscribe({
+          next: (res) => {
+            this.isSubmitting = false;
+            alert('FIR Updated successfully! FIR Number: ' + res.firNumber);
+            this.router.navigate(['/dashboard']);
+          },
+          error: (err) => {
+            this.isSubmitting = false;
+            alert('Error updating FIR.');
+            console.error(err);
+          }
+        });
+      } else {
+        this.firService.createFir(this.firForm.value).subscribe({
+          next: (res) => {
+            this.isSubmitting = false;
+            alert('FIR Registered successfully! FIR Number: ' + res.firNumber);
+            this.router.navigate(['/dashboard']);
+          },
+          error: (err) => {
+            this.isSubmitting = false;
+            alert('Error registering FIR.');
+            console.error(err);
+          }
+        });
+      }
     } else {
       this.firForm.markAllAsTouched();
     }
